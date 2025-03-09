@@ -6,43 +6,50 @@
     <title>Learn Play - Interactive Learning</title>
     <style>
         body {
+            background-color: #ffeb99;
             font-family: 'Comic Sans MS', cursive, sans-serif;
-            background-color: #ffccff;
             text-align: center;
-            padding: 50px;
+            margin: 0;
+            padding: 0;
         }
+
         h1 {
             color: #ff66cc;
             font-size: 50px;
             margin-top: 50px;
         }
+
         .login-container, .main-container, .question-container {
-            background-color: #ff99cc;
-            border-radius: 10px;
+            background-color: #ffccff;
+            border-radius: 20px;
             padding: 30px;
             width: 300px;
-            margin: 0 auto;
+            margin: 20px auto;
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
         }
+
         .input-field, .button, .answer-button {
-            padding: 10px;
-            font-size: 20px;
-            margin: 15px 0;
+            padding: 15px;
+            font-size: 18px;
+            margin: 10px 0;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
         }
+
         .signin-button {
             background-color: #ff66cc;
             color: white;
             padding: 15px 30px;
             font-size: 20px;
-            border-radius: 15px;
+            border-radius: 20px;
             cursor: pointer;
-            border: none;
             transition: background-color 0.3s;
         }
+
         .signin-button:hover {
             background-color: #ff3399;
         }
+
         .button {
             background-color: #ff99cc;
             color: white;
@@ -51,20 +58,36 @@
             border-radius: 15px;
             margin: 20px;
             cursor: pointer;
-            border: none;
             transition: background-color 0.3s, transform 0.3s;
         }
+
         .button:hover {
             background-color: #ff66cc;
             transform: scale(1.1);
         }
+
         .superhero {
             display: none;
-            font-size: 40px;
+            font-size: 30px;
             font-weight: bold;
             color: #33cc33;
-            margin-top: 50px;
+            margin-top: 30px;
+            animation: bounce 1s infinite;
         }
+
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0); }
+        }
+
+        #superhero-image {
+            display: none;
+            width: 100px;
+            margin-top: 20px;
+            animation: bounce 1s infinite;
+        }
+
     </style>
 </head>
 <body>
@@ -76,7 +99,7 @@
         <button class="signin-button" onclick="signin()">Sign In</button>
     </div>
 
-    <!-- Main Page (Visible After Sign In) -->
+    <!-- Main Page -->
     <div id="main-page" class="main-container" style="display:none;">
         <h1>Welcome, <span id="user-name"></span></h1>
         <div>
@@ -86,7 +109,7 @@
         </div>
     </div>
 
-    <!-- Question Page (Visible After Selecting Topic) -->
+    <!-- Quiz Page -->
     <div id="quiz-page" class="question-container" style="display:none;">
         <h1 id="quiz-title"></h1>
         <div id="question"></div>
@@ -95,8 +118,9 @@
         <button class="answer-button" id="answer3" onclick="checkAnswer(2)"></button>
 
         <div class="superhero" id="superhero">
-            🎉 Well Done! You answered correctly! A superhero has appeared! 🦸‍♀️🦸‍♂️
+            🎉 Well Done! You got it right! 🦸‍♀️🦸‍♂️
         </div>
+        <img id="superhero-image" src="https://i.pinimg.com/originals/a7/88/a7/a788a7fc4f1398cbe507ebc4e99a1530.png" alt="Superhero Image">
     </div>
 
     <script>
@@ -113,98 +137,5 @@
             }
         }
 
-        // Show different topics and handle quiz redirects
-        function startQuiz(topic) {
-            document.getElementById("main-page").style.display = "none";
-            document.getElementById("quiz-page").style.display = "block";
-
-            if (topic === 'math') {
-                startMathQuiz();
-            } else if (topic === 'reading') {
-                startReadingQuiz();
-            } else if (topic === 'art') {
-                startArtQuiz();
-            }
-        }
-
-        // Math Quiz
-        const mathQuestions = [
-            { question: "What is 5 + 3?", answers: [8, 6, 12], correct: 0 },
-            { question: "What is 6 + 6?", answers: [8, 12, 10], correct: 1 },
-            { question: "What is 10 - 4?", answers: [6, 7, 5], correct: 0 }
-        ];
-
-        let currentMathQuestion;
-        function startMathQuiz() {
-            currentMathQuestion = mathQuestions[Math.floor(Math.random() * mathQuestions.length)];
-            document.getElementById("quiz-title").innerText = "Math Questions";
-            document.getElementById("question").innerText = currentMathQuestion.question;
-            document.getElementById("answer1").innerText = currentMathQuestion.answers[0];
-            document.getElementById("answer2").innerText = currentMathQuestion.answers[1];
-            document.getElementById("answer3").innerText = currentMathQuestion.answers[2];
-        }
-
-        // Reading Quiz
-        const readingQuestions = [
-            { question: "Who wrote 'Harry Potter'?", answers: ['J.K. Rowling', 'J.R.R. Tolkien', 'C.S. Lewis'], correct: 0 },
-            { question: "Who wrote 'The Hobbit'?", answers: ['J.K. Rowling', 'J.R.R. Tolkien', 'C.S. Lewis'], correct: 1 },
-            { question: "Who wrote 'Chronicles of Narnia'?", answers: ['J.K. Rowling', 'J.R.R. Tolkien', 'C.S. Lewis'], correct: 2 }
-        ];
-
-        let currentReadingQuestion;
-        function startReadingQuiz() {
-            currentReadingQuestion = readingQuestions[Math.floor(Math.random() * readingQuestions.length)];
-            document.getElementById("quiz-title").innerText = "Reading Questions";
-            document.getElementById("question").innerText = currentReadingQuestion.question;
-            document.getElementById("answer1").innerText = currentReadingQuestion.answers[0];
-            document.getElementById("answer2").innerText = currentReadingQuestion.answers[1];
-            document.getElementById("answer3").innerText = currentReadingQuestion.answers[2];
-        }
-
-        // Art Quiz (Example)
-        const artQuestions = [
-            { question: "What is the color of the sky?", answers: ['Blue', 'Green', 'Red'], correct: 0 },
-            { question: "What do we use to draw?", answers: ['Pencil', 'Brush', 'Marker'], correct: 0 },
-            { question: "What color is grass?", answers: ['Green', 'Blue', 'Yellow'], correct: 0 }
-        ];
-
-        let currentArtQuestion;
-        function startArtQuiz() {
-            currentArtQuestion = artQuestions[Math.floor(Math.random() * artQuestions.length)];
-            document.getElementById("quiz-title").innerText = "Art Questions";
-            document.getElementById("question").innerText = currentArtQuestion.question;
-            document.getElementById("answer1").innerText = currentArtQuestion.answers[0];
-            document.getElementById("answer2").innerText = currentArtQuestion.answers[1];
-            document.getElementById("answer3").innerText = currentArtQuestion.answers[2];
-        }
-
-        // Check Answer and Show Superhero
-        function checkAnswer(answerIndex) {
-            const superhero = document.getElementById("superhero");
-            let correctAnswerIndex;
-
-            if (document.getElementById("quiz-title").innerText === "Math Questions") {
-                correctAnswerIndex = currentMathQuestion.correct;
-            } else if (document.getElementById("quiz-title").innerText === "Reading Questions") {
-                correctAnswerIndex = currentReadingQuestion.correct;
-            } else {
-                correctAnswerIndex = currentArtQuestion.correct;
-            }
-
-            if (answerIndex === correctAnswerIndex) {
-                superhero.style.display = "block";
-            } else {
-                alert("Oops! Try again!");
-                if (document.getElementById("quiz-title").innerText === "Math Questions") {
-                    startMathQuiz();
-                } else if (document.getElementById("quiz-title").innerText === "Reading Questions") {
-                    startReadingQuiz();
-                } else {
-                    startArtQuiz();
-                }
-            }
-        }
-    </script>
-
-</body>
-</html>
+        // Show the quiz page based on the subject
+        function start
