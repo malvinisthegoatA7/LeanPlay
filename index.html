@@ -3,86 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Learning Quiz</title>
+    <title>Fun Learning Quiz for Kids!</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f0f8ff;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to top left, #ffccff, #ffb3e6);
+            color: #333;
             text-align: center;
         }
-        .question-container {
-            margin-bottom: 20px;
+        h1 {
+            color: #ff3399;
+            font-size: 50px;
+            text-shadow: 2px 2px 10px rgba(255, 0, 150, 0.6);
+            margin-top: 50px;
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 20%, 40%, 60%, 80%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+        .quiz-container {
+            background-color: #fff;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+            width: 80%;
+            max-width: 600px;
+            display: inline-block;
+            text-align: center;
+            border: 5px solid #ff66cc;
+            overflow-y: auto;
+            max-height: 400px; /* Allows scrolling */
         }
         .question {
-            font-size: 24px;
-            margin-bottom: 10px;
+            font-size: 28px;
+            color: #ff66cc;
+            font-weight: bold;
+            margin-bottom: 20px;
         }
         .answers {
             list-style-type: none;
             padding: 0;
         }
         .answer-button {
-            background-color: #4CAF50;
+            background-color: #ff99cc;
             color: white;
-            padding: 10px;
+            padding: 15px 30px;
             border: none;
-            margin: 5px;
+            margin: 10px;
             cursor: pointer;
-            font-size: 18px;
-            border-radius: 5px;
+            font-size: 20px;
+            border-radius: 20px;
+            transition: background-color 0.3s, transform 0.3s;
         }
         .answer-button:hover {
-            background-color: #45a049;
+            background-color: #ff66cc;
+            transform: scale(1.1);
+        }
+        .answer-button:active {
+            background-color: #ff3399;
         }
         .result {
-            font-size: 20px;
+            font-size: 24px;
             font-weight: bold;
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 10px;
         }
         #nextButton {
-            display: none;
-            padding: 10px;
-            background-color: #007BFF;
+            padding: 15px 25px;
+            background-color: #00ccff;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 20px;
             cursor: pointer;
+            font-size: 20px;
+            margin-top: 30px;
+            display: none;
+            transition: background-color 0.3s;
         }
         #nextButton:hover {
-            background-color: #0056b3;
+            background-color: #00b3e6;
+        }
+        .bubble {
+            font-size: 18px;
+            color: #ff3366;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .superhero {
+            color: #ffcc00;
+            font-weight: bold;
+            text-shadow: 2px 2px 10px rgba(255, 0, 150, 0.5);
+        }
+        #background {
+            background: url('https://via.placeholder.com/1500x800.png?text=Fun+Learning+Quiz') no-repeat center center fixed;
+            background-size: cover;
+            padding: 50px 0;
         }
     </style>
 </head>
-<body>
+<body id="background">
 
-    <h1>Interactive Learning Quiz</h1>
-    <div class="question-container">
+    <h1>Fun Learning Quiz for Kids!</h1>
+    <div class="quiz-container" id="quizContainer">
         <div class="question" id="question"></div>
         <ul class="answers" id="answers"></ul>
+        <div class="result" id="result"></div>
+        <button id="nextButton" onclick="nextQuestion()">Next Question</button>
+        <div class="bubble" id="bubble"></div>
     </div>
-    <div class="result" id="result"></div>
-    <button id="nextButton" onclick="nextQuestion()">Next Question</button>
 
     <script>
         const questions = [
             {
-                question: "What is the capital of France?",
-                answers: ["Berlin", "Madrid", "Paris", "Rome"],
-                correct: "Paris"
+                question: "Who wrote 'Charlie and the Chocolate Factory'?",
+                answers: ["J.K. Rowling", "Roald Dahl", "C.S. Lewis", "E.B. White"],
+                correct: "Roald Dahl"
             },
             {
-                question: "Which planet is known as the Red Planet?",
-                answers: ["Earth", "Mars", "Venus", "Jupiter"],
-                correct: "Mars"
+                question: "What is 5 + 6?",
+                answers: ["12", "10", "11", "9"],
+                correct: "11"
             },
             {
-                question: "Who wrote 'Romeo and Juliet'?",
-                answers: ["Charles Dickens", "William Shakespeare", "Jane Austen", "Mark Twain"],
-                correct: "William Shakespeare"
+                question: "Which famous artist painted the 'Scream'?",
+                answers: ["Vincent van Gogh", "Claude Monet", "Pablo Picasso", "Edvard Munch"],
+                correct: "Edvard Munch"
+            },
+            {
+                question: "What is 8 x 7?",
+                answers: ["56", "48", "55", "64"],
+                correct: "56"
+            },
+            {
+                question: "Who is the author of 'The Cat in the Hat'?",
+                answers: ["Roald Dahl", "J.K. Rowling", "Dr. Seuss", "A.A. Milne"],
+                correct: "Dr. Seuss"
+            },
+            {
+                question: "What is 14 - 7?",
+                answers: ["5", "8", "7", "6"],
+                correct: "7"
+            },
+            {
+                question: "Who painted the 'Mona Lisa'?",
+                answers: ["Leonardo da Vinci", "Vincent van Gogh", "Claude Monet", "Pablo Picasso"],
+                correct: "Leonardo da Vinci"
             }
         ];
 
         let currentQuestionIndex = 0;
+
+        // Shuffle questions function
+        function shuffleQuestions(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+        }
+
+        // Shuffle the questions array
+        shuffleQuestions(questions);
 
         function loadQuestion() {
             const questionData = questions[currentQuestionIndex];
@@ -102,13 +191,17 @@
         function checkAnswer(selectedAnswer) {
             const questionData = questions[currentQuestionIndex];
             const result = document.getElementById("result");
+            const bubble = document.getElementById("bubble");
 
             if (selectedAnswer === questionData.correct) {
-                result.textContent = "Correct! Well done.";
-                result.style.color = "green";
+                result.textContent = "Correct! You're awesome!";
+                result.style.color = "#4CAF50";
+                result.classList.add("superhero");
+                bubble.textContent = "Yay! You got it right!";
             } else {
-                result.textContent = "Wrong! The correct answer is " + questionData.correct + ".";
-                result.style.color = "red";
+                result.textContent = "Oops! The correct answer is " + questionData.correct + ".";
+                result.style.color = "#ff5733";
+                bubble.textContent = "Oops! Try again next time!";
             }
 
             document.getElementById("nextButton").style.display = "inline-block";
@@ -119,15 +212,18 @@
             if (currentQuestionIndex < questions.length) {
                 loadQuestion();
                 document.getElementById("result").textContent = '';
+                document.getElementById("bubble").textContent = '';
                 document.getElementById("nextButton").style.display = "none";
             } else {
-                document.getElementById("result").textContent = "Quiz Completed! Well done.";
+                document.getElementById("result").textContent = "Congratulations! You've completed the quiz!";
                 document.getElementById("nextButton").style.display = "none";
             }
         }
 
         loadQuestion();
     </script>
+
 </body>
 </html>
+
 
