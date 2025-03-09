@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeanPlay - Learning Game</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            text-align: center;
+            padding: 20px;
+            color: white;
+            overflow: hidden;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #fff;
+            text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        #signup-section {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        #username {
+            padding: 10px;
+            font-size: 1.2em;
+            margin: 10px;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #fff;
+            color: #ff7e5f;
+            padding: 10px 20px;
+            font-size: 1.2em;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #ff7e5f;
+            color: white;
+        }
+
+        #game-section {
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            border-radius: 10px;
+        }
+
+        #question-section {
+            margin: 30px 0;
+        }
+
+        #answer-buttons button {
+            background-color: #fff;
+            color: #ff7e5f;
+            padding: 15px;
+            font-size: 1.2em;
+            margin: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        #answer-buttons button:hover {
+            background-color: #ff7e5f;
+            color: white;
+        }
+
+        #superhero {
+            margin-top: 30px;
+        }
+
+        #superhero-image {
+            width: 200px;
+            transition: transform 0.5s ease;
+        }
+
+        .correct-answer {
+            background-color: #32CD32;
+            color: white;
+            animation: bounce 0.5s ease;
+        }
+
+        .incorrect-answer {
+            background-color: #FF6347;
+            color: white;
+            animation: shake 0.5s ease;
+        }
+
+        /* Animations */
+        @keyframes bounce {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes shake {
+            0% {
+                transform: translateX(0);
+            }
+            25% {
+                transform: translateX(-10px);
+            }
+            50% {
+                transform: translateX(10px);
+            }
+            75% {
+                transform: translateX(-10px);
+            }
+            100% {
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Welcome to LeanPlay!</h1>
+            <p>Sign up to become a superhero and start learning!</p>
+        </header>
+
+        <div id="signup-section">
+            <h2>Sign Up to Play</h2>
+            <input type="text" id="username" placeholder="Enter your superhero name" />
+            <button id="signup-button">Sign Up</button>
+        </div>
+
+        <div id="game-section" style="display: none;">
+            <h2>Superhero, <span id="player-name"></span>! Let's start learning!</h2>
+            <p id="streak">Streak: 0</p>
+            <div id="question-section">
+                <p id="question"></p>
+                <div id="answer-buttons">
+                    <!-- Buttons will appear here dynamically -->
+                </div>
+            </div>
+            <button id="next-question" style="display: none;">Next Question</button>
+        </div>
+
+        <div id="superhero">
+            <img id="superhero-image" src="https://via.placeholder.com/200" alt="Superhero" />
+        </div>
+    </div>
+
+    <script>
+        // Store questions for each category
+        const questions = {
+            art: [
+                { question: "Who painted the Mona Lisa?", answers: ["Leonardo da Vinci", "Pablo Picasso", "Vincent van Gogh"], correct: 0 },
+                { question: "What does a primary color consist of?", answers: ["Red, Blue, Yellow", "Purple, Green, Orange", "Black, White, Grey"], correct: 0 }
+            ],
+            math: [
+                { question: "What is 5 + 5?", answers: ["10", "15", "20"], correct: 0 },
+                { question: "What is 12 x 2?", answers: ["24", "18", "36"], correct: 0 }
+            ],
+            reading: [
+                { question: "Who wrote 'Romeo and Juliet'?", answers: ["William Shakespeare", "Mark Twain", "Charles Dickens"], correct: 0 },
+                { question: "What is the main theme of 'The Great Gatsby'?", answers: ["The American Dream", "Love", "Friendship"], correct: 0 }
+            ]
+        };
+
+        let currentCategory = 'art'; // Start with art category
+        let currentQuestionIndex = 0;
+        let streak = 0;
+        let playerName = "";
+
+        // Load previous streak from localStorage
+        if (localStorage.getItem("streak")) {
+            streak = parseInt(localStorage.getItem("streak"));
+        }
+
+        // Function to start the game
+        document.getElementById('signup-button').addEventListener('click', () => {
+            playerName = document.getElementById('username').value;
+            if (playerName) {
+                document.getElementById('player-name').textContent = playerName;
+                document.getElementById('signup-section').style.display = 'none';
+                document.getElementById('game-section').style.display = 'block';
+                displayQuestion();
+                updateStreak();
+            } else {
+                alert("Please enter a superhero name to sign up!");
+            }
+        });
+
+        // Function to display question and answers
+        function displayQuestion() {
+            // Randomize the questions each time
+            const categoryQuestions = shuffle(questions[currentCategory]);
+            const questionData = categoryQuestions[currentQuestionIndex];
+            
+            document.getElementById('question').textContent = questionData.question;
+            const answerButtons = document.getElementById('answer-buttons');
+            answerButtons.innerHTML = '';
+
+            questionData.answers.forEach((answer, index) => {
+                const button = document.createElement('button');
+                button.textContent = answer;
+                button.addEventListener('click', () => checkAnswer(index, button));
+                answerButtons.appendChild(button);
+            });
+        }
+
+        // Function to check if the answer is correct
+        function checkAnswer(selectedIndex, button) {
+            const questionData = questions[currentCategory][currentQuestionIndex];
+            if (selectedIndex === questionData.correct) {
+                streak++;
+                button.classList.add('correct-answer');
+                updateSuperheroImage("https://via.placeholder.com/200?text=You+Did+It!");
+                playSound('correct');
+            } else {
+                streak = 0; // Reset streak on incorrect answer
+                button.classList.add('incorrect-answer');
+                updateSuperheroImage("https://via.placeholder.com/200?text=Oops!");
+                playSound('incorrect');
+            }
+
+            updateStreak();
+            // Show the next question
+            document.getElementById('next-question').style.display = 'block';
+        }
+
+        // Function to update streak and store it
+        function updateStreak() {
+            document.getElementById('streak').textContent = `Streak: ${streak}`;
+            localStorage.setItem("streak", streak); // Store streak in localStorage
+        }
+
+        // Function to handle "Next Question" button
+        document.getElementById('next-question').addEventListener('click', () => {
+            currentQuestionIndex++;
+            const categoryQuestions = shuffle(questions[currentCategory]);
+
+            if (currentQuestionIndex < categoryQuestions.length) {
+                displayQuestion();
+                document.getElementById('next-question').style.display = 'none';
+            } else {
+                alert("You finished this category! Choose another category to continue.");
+                currentCategory = (currentCategory === 'art') ? 'math' : (currentCategory === 'math') ? 'reading' : 'art';
+                currentQuestionIndex = 0;
+                displayQuestion();
+                document.getElementById('next-question').style.display = 'none';
+            }
+        });
+
+        // Shuffle function to randomize questions
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+            }
+            return array;
+        }
+
+        // Function to update superhero image based on performance
+        function updateSuperheroImage(imageSrc) {
+            const superheroImage = document.getElementById('superhero-image');
+            superheroImage.src = imageSrc;
+            superheroImage.style.transform = "scale(1.1)";
+            setTimeout(() => {
+                superheroImage.style.transform = "scale(1)";
+            }, 500);
+        }
+
+        // Play sound effects for correct/incorrect answers
+        function playSound(type) {
+            const audio = new Audio(type === 'correct' ? 'correct-sound.mp3' : 'incorrect-sound.mp3');
+            audio.play();
+        }
+    </script>
+</body>
+</html>
