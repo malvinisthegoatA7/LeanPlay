@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Learn Play - Interactive Learning</title>
+    <title>Learn Play - Superhero Learning</title>
     <style>
         body {
-            background-color: #ffeb99;
+            background-color: #f9f7f0;
             font-family: 'Comic Sans MS', cursive, sans-serif;
             text-align: center;
             margin: 0;
@@ -16,21 +16,21 @@
         h1 {
             color: #ff66cc;
             font-size: 50px;
-            margin-top: 50px;
+            margin-top: 30px;
         }
 
-        .login-container, .main-container, .question-container {
+        .login-container, .main-container, .quiz-container, .game-container {
             background-color: #ffccff;
             border-radius: 20px;
             padding: 30px;
-            width: 300px;
+            width: 350px;
             margin: 20px auto;
-            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.2);
         }
 
         .input-field, .button, .answer-button {
             padding: 15px;
-            font-size: 18px;
+            font-size: 20px;
             margin: 10px 0;
             border: none;
             border-radius: 8px;
@@ -75,17 +75,34 @@
             animation: bounce 1s infinite;
         }
 
+        .superhero img {
+            width: 150px;
+            margin-top: 20px;
+        }
+
         @keyframes bounce {
             0% { transform: translateY(0); }
             50% { transform: translateY(-20px); }
             100% { transform: translateY(0); }
         }
 
-        #superhero-image {
-            display: none;
-            width: 100px;
-            margin-top: 20px;
-            animation: bounce 1s infinite;
+        .race-track {
+            background-color: #d1e0e0;
+            width: 80%;
+            margin: 30px auto;
+            padding: 10px;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .race-car {
+            width: 50px;
+            height: 50px;
+            position: absolute;
+            background-color: red;
+            top: 10px;
+            left: 0;
+            border-radius: 50%;
         }
 
     </style>
@@ -94,7 +111,7 @@
 
     <!-- Sign In Page -->
     <div id="signin-page" class="login-container">
-        <h1>Sign In to Learn Play</h1>
+        <h1>Welcome to Learn Play!</h1>
         <input type="text" id="username" class="input-field" placeholder="Enter your name">
         <button class="signin-button" onclick="signin()">Sign In</button>
     </div>
@@ -103,28 +120,43 @@
     <div id="main-page" class="main-container" style="display:none;">
         <h1>Welcome, <span id="user-name"></span></h1>
         <div>
-            <button class="button" onclick="startQuiz('math')">Math</button>
-            <button class="button" onclick="startQuiz('reading')">Reading</button>
-            <button class="button" onclick="startQuiz('art')">Art</button>
+            <button class="button" onclick="startGame('math')">Math Race</button>
+            <button class="button" onclick="startGame('reading')">Reading Race</button>
+            <button class="button" onclick="startGame('geography')">Geography Race</button>
+            <button class="button" onclick="startGame('science')">Science Race</button>
+            <button class="button" onclick="startGame('art')">Art Race</button>
         </div>
     </div>
 
     <!-- Quiz Page -->
-    <div id="quiz-page" class="question-container" style="display:none;">
+    <div id="quiz-page" class="quiz-container" style="display:none;">
         <h1 id="quiz-title"></h1>
         <div id="question"></div>
         <button class="answer-button" id="answer1" onclick="checkAnswer(0)"></button>
         <button class="answer-button" id="answer2" onclick="checkAnswer(1)"></button>
         <button class="answer-button" id="answer3" onclick="checkAnswer(2)"></button>
-
-        <div class="superhero" id="superhero">
+        <div id="superhero" class="superhero">
             🎉 Well Done! You got it right! 🦸‍♀️🦸‍♂️
         </div>
-        <img id="superhero-image" src="https://i.pinimg.com/originals/a7/88/a7/a788a7fc4f1398cbe507ebc4e99a1530.png" alt="Superhero Image">
+        <img id="superhero-img" src="https://i.pinimg.com/originals/a7/88/a7/a788a7fc4f1398cbe507ebc4e99a1530.png" alt="Superhero Image">
+    </div>
+
+    <!-- Game Page for Racing -->
+    <div id="race-page" class="game-container" style="display:none;">
+        <h1 id="race-title"></h1>
+        <div class="race-track">
+            <div class="race-car" id="player-car"></div>
+            <div class="race-car" id="ai-car" style="background-color: blue;"></div>
+        </div>
+        <button class="button" onclick="startRace()">Start Race</button>
     </div>
 
     <script>
-        // Simulate Sign In
+        let currentGame = '';
+        let playerCar = document.getElementById('player-car');
+        let aiCar = document.getElementById('ai-car');
+
+        // Sign In Function
         function signin() {
             const username = document.getElementById("username").value;
             if (username) {
@@ -137,5 +169,42 @@
             }
         }
 
-        // Show the quiz page based on the subject
-        function start
+        // Start a Game (Math, Reading, Geography, etc.)
+        function startGame(game) {
+            currentGame = game;
+            document.getElementById("main-page").style.display = "none";
+            document.getElementById("quiz-page").style.display = "none";
+            document.getElementById("race-page").style.display = "block";
+            document.getElementById("race-title").innerText = `${game.charAt(0).toUpperCase() + game.slice(1)} Race!`;
+        }
+
+        // Start the Race
+        function startRace() {
+            let playerPosition = 0;
+            let aiPosition = 0;
+            const raceInterval = setInterval(function () {
+                playerPosition += Math.random() * 10;
+                aiPosition += Math.random() * 8;
+                playerCar.style.left = playerPosition + 'px';
+                aiCar.style.left = aiPosition + 'px';
+
+                if (playerPosition > 600) {
+                    clearInterval(raceInterval);
+                    alert("You win the race!");
+                    showSuperhero();
+                } else if (aiPosition > 600) {
+                    clearInterval(raceInterval);
+                    alert("AI wins the race!");
+                }
+            }, 100);
+        }
+
+        // Show Superhero after success
+        function showSuperhero() {
+            document.getElementById("superhero").style.display = "block";
+            document.getElementById("superhero-img").style.display = "block";
+        }
+    </script>
+
+</body>
+</html>
