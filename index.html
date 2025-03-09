@@ -11,12 +11,15 @@
             text-align: center;
             padding: 20px;
             color: white;
-            overflow: hidden;
+            min-height: 100vh; /* Ensure the body takes at least the full height of the screen */
+            overflow-y: auto; /* Allow vertical scrolling */
         }
 
         .container {
             max-width: 600px;
             margin: 0 auto;
+            overflow-y: auto; /* Allow scrolling within the container if needed */
+            padding-bottom: 30px; /* Add some padding at the bottom to make sure everything is visible */
         }
 
         header {
